@@ -1,0 +1,49 @@
+﻿-- a) Obtenha uma lista contendo os projetos e funcionários (ssn e nome completo) que lá trabalham;
+-- π Pno, Essn (works_on) ⨝ ρ Essn←Ssn (π Ssn, Fname, Minit, Lname (employee))
+-- with more project info
+-- (π Pno, Essn (works_on) ⨝ ρ Essn←Ssn (π Ssn, Fname, Minit, Lname (employee))) ⨝ (ρ Pno←Pnumber (π Pname, Pnumber (project)))
+
+-- b) Obtenha o nome de todos os funcionários supervisionados por ‘Carlos D Gomes’;
+
+-- NO!
+-- NUM = π Ssn (σ Fname ='Carlos' AND Minit='D' AND Lname='Gomes' (employee))
+-- π Fname, Minit, Lname (σ Super_ssn= NUM.Ssn (employee)) 
+
+-- π Fname, Minit, Lname ((employee) ⨝ ρ Super_ssn←Ssn (π Ssn (σ Fname ='Carlos' AND Minit='D' AND Lname='Gomes' (employee))))
+
+-- c) Para cada projeto, listar o seu nome e o número de horas (por semana) gastos nesse projeto por todos os funcionários;
+-- π Pname, thours (project ⨝ (ρ Pnumber←Pno (γ Pno; thours←sum(Hours) works_on)))
+
+-- d) Obter o nome de todos os funcionários do departamento 3 que trabalham mais de 20 horas por semana no projeto ‘Aveiro Digital’;
+-- worksInProject = ρ Pnumber←Pno (works_on) ⨝ σ Pname='Aveiro Digital' (project)		--employees working on the project
+-- worksMoreThan20Hours = ρ Ssn←Essn σ Hours>20 (worksInProject)											 --...working more than 20h
+-- employeesDep3 = σ Dno=3 (employee)																								 --employees working in dep 3
+-- π Fname, Minit, Lname (employeesDep3 ⨝ worksMoreThan20Hours)
+
+-- e) Nome dos funcionários que não trabalham para projetos;
+-- employeesProjects = employee ⟕ ρ Ssn←Essn works_on
+-- employeesNotInProjects = σ Pno=null employeesProjects
+-- π Fname, Minit, Lname employeesNotInProjects
+
+-- f) Para cada departamento, listar o seu nome e o salário médio dos seus funcionários do sexo feminino;
+-- femaleEmployees = department ⨝ (ρ Dnumber←Dno σ Sex='F' employee)
+-- γ Dname; avgSalary←avg(Salary) femaleEmployees
+
+-- g) Obter uma lista de todos os funcionários com mais do que dois dependentes;
+-- countDependents = ρ Ssn←Essn γ Essn; count←count(Dependent_name) dependent
+-- countDependentsMore2 = σ count > 2 countDependents
+-- (countDependentsMore2 ⋊ employee)
+
+
+-- h) Obtenha uma lista de todos os funcionários gestores de departamento que não têm dependentes;
+-- managers = employee ⨝ (ρ Ssn←Mgr_ssn department)
+-- dependentsOfManagers = managers ⟕ (ρ Ssn←Essn dependent)
+-- σ Dependent_name = null dependentsOfManagers 
+
+-- i) Obter os nomes e endereços de todos os funcionários que trabalham em, pelo menos, um projeto localizado em Aveiro mas o seu departamento não tem nenhuma localização em Aveiro.
+employeesAveiroProjs = ρ Dnumber←Dno employee ⨝ ρ Ssn←Essn (works_on ⨝ ρ Pno←Pnumber σ Plocation='Aveiro' project)
+π Fname, Minit, Lname, Address σ Dlocation != 'Aveiro' (dept_location ⨝ employeesAveiroProjs)
+
+
+
+ 
