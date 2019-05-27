@@ -1,0 +1,104 @@
+/* Guide 10, Exercise 1
+ * Paulo Vasconcelos
+ * Pedro Teixeira
+ * 22-May-2019
+ */
+
+GO
+USE AdventureWorks2012;
+GO
+
+-- Experience 1
+GO
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+SELECT * FROM Production.WorkOrder
+GO
+
+-- Experience 2
+GO
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+SELECT * FROM Production.WorkOrder WHERE WorkOrderID=1234
+GO
+
+-- Experience 3
+GO
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+SELECT * FROM Production.WorkOrder WHERE WorkOrderID BETWEEN 10000 AND 10010
+GO
+
+GO
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+SELECT * FROM Production.WorkOrder WHERE WorkOrderID BETWEEN 1 AND 72591
+GO
+
+-- Experience 4
+GO
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+SELECT * FROM Production.WorkOrder WHERE StartDate = '2007-06-25'
+GO
+
+-- Experience 5
+GO
+CREATE INDEX IX_PRODUCT ON Production.WorkOrder (ProductID);
+
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+
+SELECT * FROM Production.WorkOrder WHERE ProductID = 757
+GO
+
+-- Experience 6
+GO
+DROP INDEX IX_PRODUCT ON Production.WorkOrder
+CREATE INDEX IX_PRODUCT ON Production.WorkOrder (ProductID) INCLUDE (StartDate);
+GO
+
+GO
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+
+SELECT WorkOrderID, StartDate FROM Production.WorkOrder WHERE ProductID = 757
+GO
+
+GO
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+SELECT WorkOrderID, StartDate FROM Production.WorkOrder WHERE ProductID = 945
+GO
+
+GO
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+SELECT WorkOrderID FROM Production.WorkOrder WHERE ProductID = 945 AND StartDate = '2006-01-04'
+GO
+
+-- Experience 7
+GO
+
+DROP INDEX IX_PRODUCT ON Production.WorkOrder
+CREATE INDEX IX_PRODUCT ON Production.WorkOrder (ProductID);
+CREATE INDEX IX_DATE ON Production.WorkOrder (StartDate);
+
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+
+SELECT WorkOrderID, StartDate FROM Production.WorkOrder WHERE ProductID = 945 AND StartDate = '2006-01-04'
+GO
+
+-- Experience 8
+GO
+
+DROP INDEX IX_PRODUCT ON Production.WorkOrder
+DROP INDEX IX_DATE ON Production.WorkOrder
+CREATE INDEX IX_PRODUCT ON Production.WorkOrder (ProductID, StartDate);
+
+DBCC FREEPROCCACHE;
+DBCC DROPCLEANBUFFERS;
+
+SELECT WorkOrderID, StartDate FROM Production.WorkOrder WHERE ProductID = 945 AND StartDate = '2006-01-04'
+GO
