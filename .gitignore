@@ -260,3 +260,17 @@ paket-files/
 __pycache__/
 *.pyc
 Tests/
+
+G6/
+
+G08/
+
+G02/
+
+G01/
+
+Delivered/
+
+Dataset\.xlsx
+
+script\.sql
