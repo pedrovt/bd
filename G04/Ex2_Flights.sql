@@ -31,7 +31,7 @@ CREATE TABLE C4_Flights.LegInstance
      [date]				date, 
      numAvailableSeats	int NOT NULL DEFAULT 0, 
      flightLegNum		int,	--FK 
-	 flightLegFlight	int,	--FK
+     flightLegFlight	int,	--FK
      departsAirport		int,	--FK 
      depTime			time, 
      arrivesAirport		int,	--FK 
